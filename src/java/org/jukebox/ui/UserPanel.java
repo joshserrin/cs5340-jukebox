@@ -13,8 +13,6 @@ import javax.swing.JPanel;
 
 import org.jukebox.model.Jukebox;
 import org.jukebox.model.User;
-import org.jukebox.utils.Observer;
-import org.jukebox.utils.Option;
 
 /**
  * @author jserrin
@@ -34,29 +32,37 @@ public class UserPanel extends JPanel {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.add(userName);
 		this.add(notUser);
-
-		jukebox.addUserObserver(new HandleUserChangeEvent());
 	}
 
-	private class HandleUserChangeEvent implements Observer<User> {
-		@Override
-		public void eventHappened(final Option<User> user) {
-			assert null != user;
-			EventQueue.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					if (user.isSome()) {
-						userName.setUser(user.get());
-						notUser.setUser(user.get());
-					} else {
-						userName.clear();
-						notUser.clear();
-					}
-					userName.validate();
-					notUser.validate();
-				}
-			});
+	/**
+	 * Displays the user's information.
+	 * 
+	 * @param user
+	 */
+	public void setUser(final User user) {
+		if (null == user) {
+			throw new IllegalArgumentException("user cannot be null");
 		}
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				userName.setUser(user);
+				notUser.setUser(user);
+			}
+		});
+	}
+
+	/**
+	 * Previous user information is remove
+	 */
+	public void removeUser() {
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				userName.clear();
+				notUser.clear();
+			}
+		});
 	}
 
 	private class UserName extends JLabel {

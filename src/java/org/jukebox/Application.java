@@ -25,15 +25,6 @@ public class Application {
 				frame.setLocationRelativeTo(null); // display in middle of
 													// screen
 				frame.setVisible(true);
-
-				frame.addWindowListener(new WindowAdapter() {
-
-					@Override
-					public void windowClosing(WindowEvent e) {
-						System.out.println("Final Frame size: "
-								+ frame.getSize());
-					}
-				});
 			}
 		});
 	}
