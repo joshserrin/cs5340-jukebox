@@ -15,12 +15,11 @@ import org.jukebox.ui.transition.UserChangeTransition;
  * @author jserrin
  */
 public class JukeboxPanel extends JPanel {
-	public JukeboxPanel(Dimension prefSize) {
+	public JukeboxPanel(Jukebox jukebox, Dimension prefSize) {
 		if (null == prefSize) {
 			throw new IllegalArgumentException("prefSize cannot be null");
 		}
 
-		Jukebox jukebox = new Jukebox();
 		this.setPreferredSize(prefSize);
 		UserPanel user = new UserPanel(jukebox);
 		user.setBorder(BorderFactory.createLineBorder(Color.black));

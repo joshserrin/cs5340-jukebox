@@ -7,6 +7,14 @@ import org.jukebox.utils.Publisher;
 public class Jukebox {
 
 	private final Publisher<User> userPublisher = new Publisher<User>();
+	private final Library library;
+
+	public Jukebox(Library lib) {
+		if (null == lib) {
+			throw new IllegalArgumentException("lib cannot be null");
+		}
+		this.library = lib;
+	}
 
 	/**
 	 * Can be null if the user was timed out or logged out.
@@ -30,5 +38,23 @@ public class Jukebox {
 			throw new IllegalArgumentException("obs cannot be null");
 		}
 		userPublisher.addObserver(obs);
+	}
+
+	/**
+	 * Searching for null or an empty string will produce all the songs in the
+	 * jukebox
+	 * 
+	 * @param searchString
+	 * @return
+	 */
+	public SearchResults searchForSongMatching(String searchString) {
+		if (null == searchString || searchString.trim().equals("")) {
+			return new AllSongs(library);
+		}
+		return new LimitedResults(library, new SearchParameters(searchString));
+	}
+
+	public SearchResults allSongs() {
+		return new AllSongs(library);
 	}
 }

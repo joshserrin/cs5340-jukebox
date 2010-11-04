@@ -18,12 +18,13 @@ import org.jukebox.model.Jukebox;
  */
 public class CenterPanel extends JPanel {
 	private final BrowseLibraryPanel browselib;
+	private final Jukebox jukebox;
 
 	public CenterPanel(Jukebox jukebox) {
 		if (null == jukebox) {
 			throw new IllegalArgumentException("jukebox cannot be null");
 		}
-
+		this.jukebox = jukebox;
 		this.browselib = new BrowseLibraryPanel(jukebox);
 
 		this.setLayout(new BorderLayout());
@@ -48,7 +49,8 @@ public class CenterPanel extends JPanel {
 			@Override
 			public void run() {
 				CenterPanel.this.removeAll();
-				CenterPanel.this.add(new SearchPanel(), BorderLayout.CENTER);
+				CenterPanel.this.add(new SearchPanel(jukebox),
+						BorderLayout.CENTER);
 				CenterPanel.this.validate();
 			}
 		});
