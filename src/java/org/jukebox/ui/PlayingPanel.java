@@ -14,7 +14,7 @@ public class PlayingPanel extends JPanel {
 	public PlayingPanel() {
 		JLabel nowPlaying = new JLabel("Now Playing:");
 		nowPlaying.setFont(new Font(UIConstants.getDefaultFontName(),
-				Font.BOLD, 32));
+				Font.BOLD, UIConstants.getLargeFontSize()));
 
 		this.setBackground(Color.GREEN);
 

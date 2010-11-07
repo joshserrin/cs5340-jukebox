@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import org.jukebox.model.Album;
 import org.jukebox.model.Artist;
+import org.jukebox.model.Genre;
 import org.jukebox.model.Jukebox;
 import org.jukebox.model.Library;
 import org.jukebox.model.Song;
@@ -34,11 +35,19 @@ public class Application {
 		});
 	}
 
+	// TODO load the library
 	private static Library library() {
-		return new Library(Arrays.asList(new Song("Because Of You", new Artist(
-				"Tony Bennett"), new Album("Album?")), new Song("Song2",
-				new Artist("Artist2"), new Album("Album2")), new Song(
-				"All Nightmare Long", new Artist("Metallica"), new Album(
-						"Death Magnetic"))));
+		return new Library(Arrays.asList(becauseOfYou(), song2()));
 	}
+
+	private static Song becauseOfYou() {
+		return new Song("Because Of You", new Artist("Tony Bennett"),
+				new Album("Album", new Genre("genre")));
+	}
+
+	private static Song song2() {
+		return new Song("Song2", new Artist("Artist2"), new Album("Album2",
+				new Genre("genre")));
+	}
+
 }

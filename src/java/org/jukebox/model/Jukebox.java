@@ -1,43 +1,15 @@
 package org.jukebox.model;
 
-import org.jukebox.utils.Observer;
-import org.jukebox.utils.Option;
-import org.jukebox.utils.Publisher;
-
 public class Jukebox {
-
-	private final Publisher<User> userPublisher = new Publisher<User>();
 	private final Library library;
+	private final Playlist playlist;
 
 	public Jukebox(Library lib) {
 		if (null == lib) {
 			throw new IllegalArgumentException("lib cannot be null");
 		}
 		this.library = lib;
-	}
-
-	/**
-	 * Can be null if the user was timed out or logged out.
-	 * 
-	 * @param user
-	 *            can be null
-	 */
-	public void setFocusedUser(User user) {
-		System.out.println(user
-				+ " has logged in and now has control of the application");
-		userPublisher.publish(Option.of(user));
-	}
-
-	/**
-	 * @param obs
-	 *            when the user changes this {@link Observer} will be notified
-	 * @see Jukebox#setFocusedUser(User)
-	 */
-	public void addUserObserver(Observer<User> obs) {
-		if (null == obs) {
-			throw new IllegalArgumentException("obs cannot be null");
-		}
-		userPublisher.addObserver(obs);
+		this.playlist = new Playlist();
 	}
 
 	/**
@@ -56,5 +28,18 @@ public class Jukebox {
 
 	public SearchResults allSongs() {
 		return new AllSongs(library);
+	}
+
+	public void addSongToPlaylist(Song song) {
+		if (null == song) {
+			throw new IllegalArgumentException("song cannot be null");
+		}
+		System.out.println("\"" + song.getTitle()
+				+ "\" has been added to the playlist");
+		playlist.add(song);
+	}
+
+	public Playlist getPlaylist() {
+		return playlist;
 	}
 }

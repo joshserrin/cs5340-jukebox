@@ -1,10 +1,16 @@
 package org.jukebox.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
 
-import javax.swing.JLabel;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import org.jukebox.model.Jukebox;
 
@@ -17,29 +23,46 @@ import org.jukebox.model.Jukebox;
  * @author jserrin
  */
 public class CenterPanel extends JPanel {
-	private final BrowseLibraryPanel browselib;
-	private final Jukebox jukebox;
+	private final JButton browseLibButton;
+	private final JButton viewPlaylistButton;
+	private final JTabbedPane tabs;
 
 	public CenterPanel(Jukebox jukebox) {
 		if (null == jukebox) {
 			throw new IllegalArgumentException("jukebox cannot be null");
 		}
-		this.jukebox = jukebox;
-		this.browselib = new BrowseLibraryPanel(jukebox);
 
-		this.setLayout(new BorderLayout());
-		this.add(browselib, BorderLayout.CENTER);
+		Font font = new Font(UIConstants.getDefaultFontName(), Font.BOLD, 32);
+		this.browseLibButton = new JButton(new BrowseLibrary());
+		browseLibButton.setFont(font);
+		this.viewPlaylistButton = new JButton(new ViewPlaylist());
+		viewPlaylistButton.setFont(font);
+
+		this.tabs = new JTabbedPane();
+		tabs.addTab("Upcoming Songs",
+				new GlobalPlaylistPanel(jukebox.getPlaylist()));
+		tabs.addTab("Browse", new SearchPanel(jukebox));
+
+		displayHome();
 	}
 
-	public void displayBrowse() {
+	private void present(Component c) {
+		assert EventQueue.isDispatchThread();
+		removeAll();
+		setLayout(new BorderLayout());
+		add(c, BorderLayout.CENTER);
+		validate();
+	}
+
+	public void displayHome() {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				CenterPanel.this.removeAll();
-				CenterPanel.this.add(browselib, BorderLayout.CENTER);
-				CenterPanel.this.repaint();
-				System.out
-						.println("Search should be removed and Browse should be back");
+				JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER));
+				p.add(browseLibButton);
+				p.add(viewPlaylistButton);
+				present(p);
+				System.out.println("Home screen should be displayed");
 			}
 		});
 	}
@@ -48,11 +71,48 @@ public class CenterPanel extends JPanel {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				CenterPanel.this.removeAll();
-				CenterPanel.this.add(new SearchPanel(jukebox),
-						BorderLayout.CENTER);
-				CenterPanel.this.validate();
+				tabs.setSelectedIndex(1);
+				present(tabs);
+				System.out.println("Searching should be displayed");
 			}
 		});
+	}
+
+	private void displayPlaylist() {
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				tabs.setSelectedIndex(0);
+				present(tabs);
+				System.out.println("The playlist should be displayed");
+			}
+		});
+	}
+
+	private class ViewPlaylist extends AbstractAction {
+		public ViewPlaylist() {
+			super("View Playlist");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			displayPlaylist();
+		}
+	}
+
+	private class BrowseLibrary extends AbstractAction {
+		public BrowseLibrary() {
+			super("Browse Songs");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					displaySearch();
+				}
+			});
+		}
 	}
 }

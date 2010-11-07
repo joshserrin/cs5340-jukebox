@@ -1,17 +1,23 @@
 package org.jukebox.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.JComboBox;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,24 +26,31 @@ import javax.swing.JTextField;
 
 import org.jukebox.model.Jukebox;
 import org.jukebox.model.SearchResults;
+import org.jukebox.model.Song;
 
 public class SearchPanel extends JPanel {
+	private final Jukebox jukebox;
 	private final SearchController searcher;
 
 	public SearchPanel(Jukebox jukebox) {
 		if (null == jukebox) {
 			throw new IllegalArgumentException("jukebox cannot be null");
 		}
+		this.jukebox = jukebox;
 
-		SearchBox search = new SearchBox();
-		Filter filter = new Filter();
+		final SearchBox search = new SearchBox();
 		Results results = new Results();
-		this.searcher = new SearchController(results, jukebox);
+		this.searcher = new SearchController(results);
 		searcher.displayAllSongs();
 
 		JPanel upper = new JPanel(new FlowLayout());
 		upper.add(search);
-		upper.add(filter);
+		upper.add(new JButton(new AbstractAction("Display All Songs") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				search.clear();
+			}
+		}));
 
 		this.setLayout(new BorderLayout());
 		this.add(upper, BorderLayout.NORTH);
@@ -48,13 +61,10 @@ public class SearchPanel extends JPanel {
 		private final ExecutorService exec = Executors
 				.newSingleThreadExecutor();
 		private final Results results;
-		private final Jukebox jukebox;
 
-		public SearchController(Results results, Jukebox jukebox) {
+		public SearchController(Results results) {
 			assert null != results;
-			assert null != jukebox;
 			this.results = results;
-			this.jukebox = jukebox;
 		}
 
 		public void displayAllSongs() {
@@ -92,17 +102,21 @@ public class SearchPanel extends JPanel {
 				}
 			});
 		}
-	}
 
-	private class Filter extends JComboBox {
-		public Filter() {
-			super(new String[] { "All", "Rock", "Classical" });
+		public void clear() {
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					SearchBox.this.setText("");
+					searcher.displayAllSongs();
+				}
+			});
 		}
 	}
 
 	private class Results extends JPanel {
 		public Results() {
-			this.setLayout(new BorderLayout());
+			this.setBorder(BorderFactory.createLineBorder(Color.blue));
 		}
 
 		public void display(SearchResults matching) {
@@ -117,10 +131,20 @@ public class SearchPanel extends JPanel {
 			EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					System.out.println("Displaying some matching results");
-					JScrollPane sp = new JScrollPane(new JTable(
-							new ResultsTableModel(matching)));
+					final JTable table = new JTable(new ResultsTableModel(
+							matching));
+					JScrollPane sp = new JScrollPane(table);
+					table.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							int row = table.rowAtPoint(e.getPoint());
+							Song song = matching.get(row);
+							jukebox.addSongToPlaylist(song);
+						}
+					});
 					present(sp);
+					System.out.println("Displaying some matching results: "
+							+ matching);
 				}
 			});
 		}
@@ -129,8 +153,10 @@ public class SearchPanel extends JPanel {
 			assert EventQueue.isDispatchThread();
 			assert null != c;
 			removeAll();
+			setLayout(new BorderLayout());
 			add(c, BorderLayout.CENTER);
 			validate();
+			repaint();
 		}
 
 		private void displayNoMatches() {
