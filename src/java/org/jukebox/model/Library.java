@@ -2,8 +2,9 @@ package org.jukebox.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Random;
 
 public class Library {
 	private final List<Song> songs;
@@ -12,7 +13,8 @@ public class Library {
 		if (null == songs) {
 			throw new IllegalArgumentException("songs cannot be null");
 		}
-		this.songs = new CopyOnWriteArrayList<Song>(songs);
+		// Make sure you copy the list
+		this.songs = Collections.synchronizedList(new ArrayList<Song>(songs));
 	}
 
 	public Collection<Song> searchAll(SearchParameters params) {
@@ -56,6 +58,13 @@ public class Library {
 	}
 
 	public Song songAtIndex(int i) {
+		return songs.get(i);
+	}
+
+	private final Random r = new Random(47);
+
+	public Song randomSong() {
+		int i = r.nextInt(songs.size());
 		return songs.get(i);
 	}
 }

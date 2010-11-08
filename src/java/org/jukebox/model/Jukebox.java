@@ -42,4 +42,8 @@ public class Jukebox {
 	public Playlist getPlaylist() {
 		return playlist;
 	}
+
+	public Song randomSong() {
+		return library.randomSong();
+	}
 }

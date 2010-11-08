@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.Arrays;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -52,6 +53,8 @@ public class SongPanel extends JPanel {
 			c.setBackground(Color.white);
 			c.setOpaque(true);
 		}
+
+		this.setBorder(BorderFactory.createRaisedBevelBorder());
 	}
 
 }

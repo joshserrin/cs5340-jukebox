@@ -49,9 +49,12 @@ public class GlobalPlaylistPanel extends JPanel {
 			public void songAdded(Song song) {
 				updatePlaylist();
 			}
-		});
 
-		updatePlaylist();
+			@Override
+			public void songRemoved(Song s) {
+				updatePlaylist();
+			}
+		});
 	}
 
 	private void updatePlaylist() {
@@ -68,6 +71,8 @@ public class GlobalPlaylistPanel extends JPanel {
 						view.add(new SongWithIndex(i++, requests.next()));
 					}
 				}
+				GlobalPlaylistPanel.this.validate();
+				GlobalPlaylistPanel.this.repaint();
 			}
 		});
 	}
