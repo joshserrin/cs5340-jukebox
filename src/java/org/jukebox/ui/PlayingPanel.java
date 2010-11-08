@@ -1,5 +1,6 @@
 package org.jukebox.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -8,25 +9,24 @@ import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
-import org.jukebox.model.Jukebox;
 import org.jukebox.model.Player;
 import org.jukebox.model.Player.PlayObserver;
 import org.jukebox.model.Player.PlayingDetails;
-import org.jukebox.model.Song;
 import org.jukebox.utils.Option;
 
 /**
  * @author jserrin
  */
 public class PlayingPanel extends JPanel {
-	private final Player player;
+	private final SongTime songTime;
 
-	public PlayingPanel(Jukebox jukebox) {
-		if (null == jukebox) {
-			throw new IllegalArgumentException("jukebox cannot be null");
+	public PlayingPanel(Player player) {
+		if (null == player) {
+			throw new IllegalArgumentException("player cannot be null");
 		}
-		this.player = new Player(jukebox);
+		this.songTime = new SongTime();
 		player.add(new DisplayNewSong());
 		JLabel nowPlaying = new JLabel("Now Playing:");
 		nowPlaying.setFont(new Font(UIConstants.getDefaultFontName(),
@@ -34,8 +34,8 @@ public class PlayingPanel extends JPanel {
 
 		this.setBackground(Color.GREEN);
 
-		this.setLayout(new FlowLayout(FlowLayout.LEADING));
-		this.add(nowPlaying);
+		this.setLayout(new BorderLayout());
+		this.add(nowPlaying, BorderLayout.WEST);
 
 		// We want the application to start playing songs as soon as it starts
 		// up
@@ -56,11 +56,29 @@ public class PlayingPanel extends JPanel {
 					}
 					SongPanel sp = new SongPanel(details.getSong());
 					playingSongDisplay = Option.<Component> of(sp);
+					JPanel panel = new JPanel(new BorderLayout());
+					panel.add(sp, BorderLayout.CENTER);
+					songTime.newSongPlaying(details);
+//					panel.add(songTime, BorderLayout.SOUTH);
+
 					pp.add(sp);
 					pp.validate();
 					pp.repaint();
 				}
 			});
+		}
+	}
+
+	private class SongTime extends JPanel {
+		private final JProgressBar progress;
+
+		public SongTime() {
+			this.progress = new JProgressBar();
+			this.setLayout(new BorderLayout());
+			this.add(progress, BorderLayout.CENTER);
+		}
+
+		public void newSongPlaying(PlayingDetails details) {
 		}
 	}
 }

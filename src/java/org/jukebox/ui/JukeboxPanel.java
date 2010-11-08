@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
 import org.jukebox.model.Jukebox;
+import org.jukebox.model.Player;
 
 /**
  * @author jserrin
@@ -15,7 +16,8 @@ public class JukeboxPanel extends JPanel {
 			throw new IllegalArgumentException("jukebox cannot be null");
 		}
 
-		JPanel playing = new PlayingPanel(jukebox);
+		Player player = new Player(jukebox);
+		JPanel playing = new PlayingPanel(player);
 		CenterPanel center = new CenterPanel(jukebox);
 
 		this.setLayout(new BorderLayout());
