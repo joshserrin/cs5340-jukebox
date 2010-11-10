@@ -1,7 +1,6 @@
 package org.jukebox;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -17,7 +16,6 @@ public class Application {
 			public void run() {
 				JPanel mainPanel = new JukeboxPanel(new Jukebox(MockLibrary
 						.create()));
-				mainPanel.setPreferredSize(new Dimension(1100, 700));
 
 				final JFrame frame = new JFrame("Jukebox");
 				frame.setLayout(new BorderLayout());

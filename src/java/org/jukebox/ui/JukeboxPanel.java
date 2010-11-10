@@ -1,8 +1,10 @@
 package org.jukebox.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 import org.jukebox.model.Jukebox;
 import org.jukebox.model.Player;
@@ -15,10 +17,17 @@ public class JukeboxPanel extends JPanel {
 		if (null == jukebox) {
 			throw new IllegalArgumentException("jukebox cannot be null");
 		}
-
+		Dimension prefSize = new Dimension(1100, 700);
+		this.setPreferredSize(prefSize);
 		Player player = new Player(jukebox);
 		JPanel playing = new PlayingPanel(player);
-		CenterPanel center = new CenterPanel(jukebox);
+		JPanel library = new LibraryPanel(jukebox);
+		JPanel playlist = new GlobalPlaylistPanel(jukebox.getPlaylist());
+
+		JSplitPane center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				playlist, library);
+		center.setDividerLocation((int) (prefSize.width * .35));
+		center.setDividerSize(0);
 
 		this.setLayout(new BorderLayout());
 		this.add(playing, BorderLayout.NORTH);

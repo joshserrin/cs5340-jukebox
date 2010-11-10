@@ -1,6 +1,9 @@
 package org.jukebox;
 
-import java.util.Arrays;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Random;
 
 import org.jukebox.model.Album;
 import org.jukebox.model.Artist;
@@ -11,16 +14,24 @@ import org.jukebox.model.Song;
 public class MockLibrary {
 
 	public static Library create() {
-		return new Library(Arrays.asList(becauseOfYou(), song2()));
+		return new Library(constructSongs(20));
 	}
 
-	private static Song becauseOfYou() {
-		return new Song("Because Of You", new Artist("Tony Bennett"),
-				new Album("Album", new Genre("genre")));
-	}
-
-	private static Song song2() {
-		return new Song("Song2", new Artist("Artist2"), new Album("Album2",
-				new Genre("genre")));
+	private static Collection<Song> constructSongs(int count) {
+		Collection<Song> songs = new ArrayList<Song>();
+		Random r = new Random(47);
+		for (int i = 0; i < count; i++) {
+			// The library is sorted on the artist's name so we don't want the
+			// first character to always be the same.
+			Artist artist = new Artist(new BigInteger(3, r).toString()
+					+ "-artist");
+			// There should only be a small amount of Genre's. For the mock
+			// library, 5 should be enough.
+			Genre genre = new Genre("Genre" + (i % 5));
+			Album album = new Album("Album" + i, genre);
+			Song s = new Song("Song" + i, artist, album);
+			songs.add(s);
+		}
+		return songs;
 	}
 }

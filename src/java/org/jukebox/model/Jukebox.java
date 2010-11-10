@@ -1,5 +1,7 @@
 package org.jukebox.model;
 
+import java.util.List;
+
 public class Jukebox {
 	private final Library library;
 	private final Playlist playlist;
@@ -45,5 +47,9 @@ public class Jukebox {
 
 	public Song randomSong() {
 		return library.randomSong();
+	}
+
+	public List<Song> allSongsSortedbyArtist() {
+		return library.allSongsSortedByArtist();
 	}
 }
