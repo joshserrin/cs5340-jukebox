@@ -27,7 +27,7 @@ public class JukeboxPanel extends JPanel {
 		JSplitPane center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				playlist, library);
 		center.setDividerLocation((int) (prefSize.width * .35));
-		center.setDividerSize(0);
+//		center.setDividerSize(1);
 
 		this.setLayout(new BorderLayout());
 		this.add(playing, BorderLayout.NORTH);

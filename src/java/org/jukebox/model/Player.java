@@ -79,7 +79,11 @@ public class Player {
 				@Override
 				public Void call() throws Exception {
 					notifyPlayingNewSong(new PlayingDetails(s, length, device));
-					player.play();
+					try {
+						player.play();
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
 					return null;
 				}
 			});
@@ -103,9 +107,6 @@ public class Player {
 				String key = "duration";
 				Long microseconds = (Long) properties.get(key);
 				int mili = (int) (microseconds / 1000);
-				int sec = (mili / 1000) % 60;
-				int min = (mili / 1000) / 60;
-				System.out.println("time = " + min + ":" + sec);
 				return mili / 1000;
 			} else {
 				throw new UnsupportedAudioFileException();
