@@ -35,6 +35,7 @@ public class PlayingPanel extends JPanel {
 
 		this.setLayout(new BorderLayout());
 		this.add(nowPlaying, BorderLayout.WEST);
+		this.add(songTime, BorderLayout.SOUTH);
 
 		// We want the application to start playing songs as soon as it starts
 		// up
@@ -55,10 +56,9 @@ public class PlayingPanel extends JPanel {
 					}
 					SongPanel sp = new SongPanel(details.getSong());
 					playingSongDisplay = Option.<Component> of(sp);
-					JPanel panel = new JPanel(new BorderLayout());
-					panel.add(sp, BorderLayout.CENTER);
-					songTime.newSongPlaying(details);
-//					panel.add(songTime, BorderLayout.SOUTH);
+					// JPanel panel = new JPanel(new BorderLayout());
+					// panel.add(sp, BorderLayout.CENTER);
+					// panel.add(songTime, BorderLayout.SOUTH);
 
 					pp.add(sp);
 					pp.validate();
@@ -66,18 +66,32 @@ public class PlayingPanel extends JPanel {
 				}
 			});
 		}
+
+		@Override
+		public void songUpdate(PlayingDetails details) {
+			songTime.updateTimes(details);
+		}
 	}
 
 	private class SongTime extends JPanel {
 		private final JProgressBar progress;
 
 		public SongTime() {
-			this.progress = new JProgressBar();
+			this.progress = new JProgressBar(0, 100);
+			progress.setStringPainted(true);
 			this.setLayout(new BorderLayout());
 			this.add(progress, BorderLayout.CENTER);
 		}
 
-		public void newSongPlaying(PlayingDetails details) {
+		public void updateTimes(PlayingDetails details) {
+			int duration = details.getLengthSeconds();
+			int played = details.getPlayedAmountSeconds();
+
+			progress.setMinimum(0);
+			progress.setValue(played);
+			progress.setMaximum(duration);
+			progress.setString(Integer.toString(played) + " / "
+					+ Integer.toString(duration));
 		}
 	}
 }

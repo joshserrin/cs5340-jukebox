@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,17 +46,20 @@ public class LibraryPanel extends JPanel {
 		final JPanel view = new JPanel(cards);
 		int pageCount = 0;
 		final int perPage = 4;
-		for (Map.Entry<String, List<Song>> entry : groups.entrySet()) {
-			String key = entry.getKey();
-			List<Song> songs = entry.getValue();
+		List<String> keys = new ArrayList<String>(groups.keySet());
+		Collections.sort(keys);
+		for (String key : keys) {
+			List<Song> songs = groups.get(key);
+			assert null != songs;
 			for (int i = 0, k = songs.size(); i < k; i = i + perPage) {
 				List<Song> forPage = songs.subList(i,
 						Math.min(songs.size(), i + perPage));
 				Page page = new Page(key, forPage);
-				view.add(page, page.key);
+				view.add(page, (key + i));
 				pageCount++;
-				System.out.println("Created a page for " + page.key);
 			}
+			System.out.println("Created a page for " + key + " containing "
+					+ songs.size() + " songs");
 		}
 
 		this.setLayout(new BorderLayout());
@@ -119,7 +123,7 @@ public class LibraryPanel extends JPanel {
 						selectedCard.incrementAndGet();
 						previous.setEnabled(true);
 					}
-					if (selectedCard.get() == numCards) {
+					if (selectedCard.get() == numCards - 1) {
 						next.setEnabled(false);
 					}
 				}
@@ -138,7 +142,7 @@ public class LibraryPanel extends JPanel {
 	}
 
 	private class Page extends JPanel {
-		private final String key;
+		// private final String key;
 
 		public Page(String key, List<Song> forPage) {
 			if (null == key) {
@@ -148,7 +152,7 @@ public class LibraryPanel extends JPanel {
 				throw new IllegalArgumentException("forPage cannot be null");
 			}
 
-			this.key = key;
+			// this.key = key;
 			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			for (final Song song : forPage) {
 				SongPanel sp = new SongPanel(song);
