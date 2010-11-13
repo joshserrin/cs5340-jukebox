@@ -1,0 +1,29 @@
+<library>
+  <!--
+    This could be refactored in some of the following ways.
+      1. The albums could be outside the song node.  Therefore we can define
+          one album and the songs can reference them.  This will prevent repeating
+          the album definition.
+  !-->
+  <song title="Unforgettable">
+    <file location="Music/Unforgettable.mp3"/>
+    <artist name="Nat King Cole"/>
+    <album title="The Nat King Cole Story">
+      <genre name="Classics"/>
+    </album>
+  </song>
+  <song title="Have a Holly, Jolly Christmas">
+    <file location="Music/Have a Holly, Jolly Christmas.mp3"/>
+    <artist name="Frank Sinatra"/>
+    <album title="Frank's Christmas Collection">
+      <genre name="Holidays"/>
+    </album>
+  </song>
+  <song title="The Little Drummer Boy">
+    <file location="Music/The Little Drummer Boy.mp3"/>
+    <artist name="Frank Sinatra"/>
+    <album title="Frank's Christmas Collection">
+      <genre name="Holidays"/>
+    </album>
+  </song>
+</library>

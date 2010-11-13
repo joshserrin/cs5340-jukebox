@@ -14,24 +14,6 @@ public class Jukebox {
 		this.playlist = new Playlist();
 	}
 
-	/**
-	 * Searching for null or an empty string will produce all the songs in the
-	 * jukebox
-	 * 
-	 * @param searchString
-	 * @return
-	 */
-	public SearchResults searchForSongMatching(String searchString) {
-		if (null == searchString || searchString.trim().equals("")) {
-			return new AllSongs(library);
-		}
-		return new LimitedResults(library, new SearchParameters(searchString));
-	}
-
-	public SearchResults allSongs() {
-		return new AllSongs(library);
-	}
-
 	public void addSongToPlaylist(Song song) {
 		if (null == song) {
 			throw new IllegalArgumentException("song cannot be null");

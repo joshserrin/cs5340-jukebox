@@ -27,6 +27,7 @@ public class MockLibrary {
 		File[] files = music.listFiles();
 		for (File f : files) {
 			if (!f.isDirectory()) {
+				System.out.println(f);
 				all.add(f.getName());
 			}
 		}

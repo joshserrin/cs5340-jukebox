@@ -60,7 +60,7 @@ public class Player {
 	 */
 	private void play(final Song s) throws InterruptedException {
 		assert null != s;
-		System.out.println("PLAYING: " + s.getTitle());
+		System.out.println("PLAYING: " + s);
 		try {
 			URL url = s.getURL();
 			final long length = getLengthSeconds(url);

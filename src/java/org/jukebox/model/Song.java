@@ -45,4 +45,10 @@ public class Song {
 	public URL getURL() {
 		return url;
 	}
+
+	@Override
+	public String toString() {
+		return "Song [title=" + title + ", artist=" + artist + ", album="
+				+ album + ", url=" + url + "]";
+	}
 }
