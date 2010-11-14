@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.text.DecimalFormat;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -90,9 +91,19 @@ public class PlayingPanel extends JPanel {
 			progress.setMinimum(0);
 			progress.setValue(played);
 			progress.setMaximum(duration);
-			
-			progress.setString(Integer.toString(played) + " / "
-					+ Integer.toString(duration));
+
+			String l = toTime(duration);
+			String p = toTime(played);
+
+			progress.setString(p + " / " + l);
+		}
+
+		private String toTime(int seconds) {
+			// Let's assume that songs can't be an hour long
+			int m = seconds / 60;
+			int s = seconds % 60;
+			DecimalFormat df = new DecimalFormat("00");
+			return df.format(m) + ":" + df.format(s);
 		}
 	}
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.swing.ImageIcon;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,6 +32,7 @@ public class LibraryXML {
 	public static final String GENRE = "genre";
 	public static final String FILE = "file";
 	public static final String LOCATION = "location";
+	public static final String COVER = "cover";
 
 	public static Library from(String file) throws IOException,
 			ParserConfigurationException, SAXException {
@@ -102,7 +104,7 @@ public class LibraryXML {
 		public T from(Node node) throws IOException;
 	}
 
-	private static <T> T getTOrException(String nodeName, Node node,
+	private static <T> Option<T> getT(String nodeName, Node node,
 			Function<T> funct) throws IOException {
 		assert null != nodeName;
 		assert null != node;
@@ -111,11 +113,21 @@ public class LibraryXML {
 		for (int i = 0, k = children.getLength(); i < k; i++) {
 			Node c = children.item(i);
 			if (c.getNodeName().equals(nodeName)) {
-				return funct.from(c);
+				return Option.of(funct.from(c));
 			}
 		}
-		throw new IOException(node + " does not contain a child named "
-				+ nodeName);
+		return Option.of(null);
+	}
+
+	private static <T> T getTOrException(String nodeName, Node node,
+			Function<T> funct) throws IOException {
+		Option<T> opt = getT(nodeName, node, funct);
+		if (opt.isNone()) {
+			throw new IOException(node + " does not contain a child named "
+					+ nodeName);
+		} else {
+			return opt.get();
+		}
 	}
 
 	private static File getFileOrException(Node node) throws IOException {
@@ -131,7 +143,17 @@ public class LibraryXML {
 		return getTOrException(ALBUM, node, new Function<Album>() {
 			@Override
 			public Album from(Node node) throws IOException {
-				return new Album(getAttributeValue(node, TITLE), getGenre(node));
+				return new Album(getAttributeValue(node, TITLE),
+						getGenre(node), getCover(node));
+			}
+		});
+	}
+
+	private static Option<ImageIcon> getCover(Node node) throws IOException {
+		return getT(COVER, node, new Function<ImageIcon>() {
+			@Override
+			public ImageIcon from(Node node) throws IOException {
+				return new ImageIcon(getAttributeValue(node, LOCATION));
 			}
 		});
 	}

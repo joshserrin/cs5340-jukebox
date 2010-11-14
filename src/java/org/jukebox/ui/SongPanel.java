@@ -1,17 +1,18 @@
 package org.jukebox.ui;
 
-import java.awt.Color;
+import java.awt.BorderLayout;
+import static org.jukebox.ui.UIConstants.*;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jukebox.model.Song;
+import org.jukebox.utils.Option;
 
 public class SongPanel extends JPanel {
 
@@ -19,12 +20,12 @@ public class SongPanel extends JPanel {
 		if (null == song) {
 			throw new IllegalArgumentException("song cannot be null");
 		}
-		JLabel songTitle = new JLabel("\"" + song.getTitle() + "\"");
+		JLabel songTitle = new JLabel(QUOTE + song.getTitle() + QUOTE);
 		JLabel by = new JLabel("by");
 		JLabel artist = new JLabel(song.getArtist().getName());
 		JLabel album = new JLabel(song.getAlbum().getTitle());
-		JLabel genre = new JLabel("(" + song.getAlbum().getGenre().getName()
-				+ ")");
+		JLabel genre = new JLabel(OPEN_PAREN
+				+ song.getAlbum().getGenre().getName() + CLOSE_PAREN);
 
 		songTitle.setFont(new Font(UIConstants.getDefaultFontName(),
 				Font.PLAIN, UIConstants.getMediumFontSize()));
@@ -44,17 +45,18 @@ public class SongPanel extends JPanel {
 		albumAndGenre.add(album);
 		albumAndGenre.add(genre);
 
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		this.add(titleAndArtist);
-		this.add(albumAndGenre);
-
-		for (JComponent c : Arrays.<JComponent> asList(this, songTitle, by,
-				artist, album, genre)) {
-			c.setBackground(Color.white);
-			c.setOpaque(true);
-		}
+		JPanel center = new JPanel();
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		center.add(titleAndArtist);
+		center.add(albumAndGenre);
 
 		this.setBorder(BorderFactory.createRaisedBevelBorder());
+		this.setLayout(new BorderLayout());
+		this.add(center, BorderLayout.CENTER);
+		Option<ImageIcon> cover = song.getAlbum().getCover();
+		if (cover.isSome()) {
+			JLabel c = new JLabel(cover.get());
+			this.add(c, BorderLayout.WEST);
+		}
 	}
-
 }

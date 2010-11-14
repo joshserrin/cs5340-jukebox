@@ -17,6 +17,7 @@
     <artist name="Frank Sinatra"/>
     <album title="Frank's Christmas Collection">
       <genre name="Holidays"/>
+      <cover location="Music/frank-xmas-coll.jpg"/>
     </album>
   </song>
   <song title="The Little Drummer Boy">
@@ -24,6 +25,7 @@
     <artist name="Frank Sinatra"/>
     <album title="Frank's Christmas Collection">
       <genre name="Holidays"/>
+      <cover location="Music/frank-xmas-coll.jpg"/>
     </album>
   </song>
 </library>

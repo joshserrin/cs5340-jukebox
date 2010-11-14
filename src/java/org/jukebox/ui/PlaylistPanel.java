@@ -7,8 +7,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -25,11 +23,11 @@ import org.jukebox.model.Song;
 /**
  * @author jserrin
  */
-public class GlobalPlaylistPanel extends JPanel {
+public class PlaylistPanel extends JPanel {
 	private final Playlist playlist;
 	private final JPanel view;
 
-	public GlobalPlaylistPanel(Playlist playlist) {
+	public PlaylistPanel(Playlist playlist) {
 		if (null == playlist) {
 			throw new IllegalArgumentException("playlist cannot be null");
 		}
@@ -71,8 +69,8 @@ public class GlobalPlaylistPanel extends JPanel {
 						view.add(new SongWithIndex(i++, requests.next()));
 					}
 				}
-				GlobalPlaylistPanel.this.validate();
-				GlobalPlaylistPanel.this.repaint();
+				PlaylistPanel.this.validate();
+				PlaylistPanel.this.repaint();
 			}
 		});
 	}
@@ -92,18 +90,11 @@ public class GlobalPlaylistPanel extends JPanel {
 			indexLabel.setPreferredSize(new Dimension(100, 30));
 			indexLabel.setFont(new Font(UIConstants.getDefaultFontName(),
 					Font.BOLD, UIConstants.getMediumFontSize()));
-			Component song = new SongPanel(request.getSong());
+			Component song = new SimpleSongPanel(request.getSong());
 
 			this.setLayout(new FlowLayout(FlowLayout.LEADING));
 			this.add(indexLabel);
 			this.add(song);
-
-			indexLabel.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseClicked(MouseEvent e) {
-					System.out.println(indexLabel.getSize());
-				}
-			});
 		}
 	}
 }

@@ -22,7 +22,7 @@ public class JukeboxPanel extends JPanel {
 		Player player = new Player(jukebox);
 		JPanel playing = new PlayingPanel(player);
 		JPanel library = new LibraryPanel(jukebox);
-		JPanel playlist = new GlobalPlaylistPanel(jukebox.getPlaylist());
+		JPanel playlist = new PlaylistPanel(jukebox.getPlaylist());
 
 		JSplitPane center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				playlist, library);
