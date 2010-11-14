@@ -1,0 +1,51 @@
+<project name="jukebox" default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
+  	<property name="src" location="src/java"/>
+  	<property name="build" location="target/classes"/>
+  	<property name="dist"  location="target/dist"/>
+  	<property name="lib" location="lib"/>
+  	
+  	<path id="base.path">
+      <fileset dir="${lib}">
+        <include name="**/*.jar"/>
+      </fileset>
+	  </path>  
+	
+  	<target name="init">
+    	<mkdir dir="${build}"/>
+			<mkdir dir="${dist}" />
+			<mkdir dir="${dist}/lib"/>
+  	</target>
+	
+  	<target name="compile" depends="init" description="compile the source">	
+    	<javac destdir="${build}" debug="true" source="1.6" target="1.6">
+    		<src path="${src}"/>
+    		<classpath refid="base.path" />	
+    	</javac>
+  	</target>
+		
+	  <target name="dist" depends="clean,compile" description="Generate binary and source archives for distribution">
+			<copy todir="${dist}/lib">
+				<fileset dir="${lib}"/>
+			</copy>
+			<copy file="library.xml" todir="${dist}"/>
+			<copy todir="${dist}/Music">
+			  <fileset dir="Music"/>
+			</copy>
+			<copy file="jukebox.sh" todir="${dist}"/>
+			<copy todir="${dist}/images">
+			  <fileset dir="images"/>
+			</copy>
+			<jar jarfile="${dist}/lib/${ant.project.name}.jar" basedir="${build}"/>
+			
+			<zip destfile="target/${ant.project.name}.zip" update="true">
+			  <zipfileset dir="${dist}"/>
+			</zip>
+	  </target>
+
+  	<target name="clean" description="clean up">
+  		<delete>
+     		<fileset dir="." includes="**/*.bak"/>
+  		</delete> 
+  		<delete dir="target" failonerror="false"/>
+  	</target>	
+</project>

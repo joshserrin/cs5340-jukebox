@@ -18,7 +18,6 @@ public class Application {
 			public void run() {
 				try {
 					Library library = LibraryXML.from("library.xml");
-					// Library library = MockLibrary.create();
 					JPanel mainPanel = new JukeboxPanel(new Jukebox(library));
 
 					final JFrame frame = new JFrame("Jukebox");

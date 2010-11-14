@@ -90,6 +90,7 @@ public class PlayingPanel extends JPanel {
 			progress.setMinimum(0);
 			progress.setValue(played);
 			progress.setMaximum(duration);
+			
 			progress.setString(Integer.toString(played) + " / "
 					+ Integer.toString(duration));
 		}
