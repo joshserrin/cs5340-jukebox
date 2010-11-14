@@ -13,7 +13,6 @@ else
 fi
 
 CLASSPATH="jukebox.jar"
-CLASSPATH="${CLASSPATH}${SEPARATOR}images/"
 for JAR in `ls lib` ; do
   JAR_PATH="lib/${JAR}"
   CLASSPATH="${CLASSPATH}${SEPARATOR}${JAR_PATH}"

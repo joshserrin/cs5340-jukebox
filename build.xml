@@ -21,6 +21,9 @@
     		<src path="${src}"/>
     		<classpath refid="base.path" />	
     	</javac>
+			<copy todir="${build}">
+			  <fileset dir="images"/>
+			</copy>
   	</target>
 		
 	  <target name="dist" depends="clean,compile" description="Generate binary and source archives for distribution">
@@ -32,9 +35,6 @@
 			  <fileset dir="Music"/>
 			</copy>
 			<copy file="jukebox.sh" todir="${dist}"/>
-			<copy todir="${dist}/images">
-			  <fileset dir="images"/>
-			</copy>
 			<jar jarfile="${dist}/lib/${ant.project.name}.jar" basedir="${build}"/>
 			
 			<zip destfile="target/${ant.project.name}.zip" update="true">

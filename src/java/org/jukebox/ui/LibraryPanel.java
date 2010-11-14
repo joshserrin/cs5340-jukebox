@@ -3,6 +3,7 @@ package org.jukebox.ui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,16 +16,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.jukebox.model.Jukebox;
 import org.jukebox.model.Song;
 
 public class LibraryPanel extends JPanel {
-
+	public static final int SONGS_PER_PAGE = 4;
 	private final Jukebox jukebox;
 
 	public LibraryPanel(Jukebox jukebox) {
@@ -45,15 +48,14 @@ public class LibraryPanel extends JPanel {
 		final CardLayout cards = new CardLayout();
 		final JPanel view = new JPanel(cards);
 		int pageCount = 0;
-		final int perPage = 4;
 		List<String> keys = new ArrayList<String>(groups.keySet());
 		Collections.sort(keys);
 		for (String key : keys) {
 			List<Song> songs = groups.get(key);
 			assert null != songs;
-			for (int i = 0, k = songs.size(); i < k; i = i + perPage) {
+			for (int i = 0, k = songs.size(); i < k; i = i + SONGS_PER_PAGE) {
 				List<Song> forPage = songs.subList(i,
-						Math.min(songs.size(), i + perPage));
+						Math.min(songs.size(), i + SONGS_PER_PAGE));
 				Page page = new Page(key, forPage);
 				view.add(page, (key + i));
 				pageCount++;
@@ -65,6 +67,8 @@ public class LibraryPanel extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(view, BorderLayout.CENTER);
 		this.add(new PageFlipper(pageCount, cards, view), BorderLayout.SOUTH);
+
+		this.setBorder(BorderFactory.createTitledBorder("Library"));
 	}
 
 	private Map<String, List<Song>> groupSongs(List<Song> byArtist) {
@@ -87,6 +91,7 @@ public class LibraryPanel extends JPanel {
 		private final Container view;
 		private final AtomicInteger selectedCard = new AtomicInteger(0);
 		private final Action previous, next;
+		private final JLabel label;
 
 		public PageFlipper(int _numCards, CardLayout _cards, JPanel _view) {
 			assert _numCards > 0;
@@ -100,34 +105,9 @@ public class LibraryPanel extends JPanel {
 			// through the previous panel.
 			final int height = 32;
 			final int width = 32;
-			this.previous = new AbstractAction("", IconLoader.getIcon(
-					"arrow-left.png", width, height)) {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedCard.get() > 0) {
-						cards.previous(view);
-						selectedCard.decrementAndGet();
-						next.setEnabled(true);
-					}
-					if (selectedCard.get() == 0) {
-						previous.setEnabled(false);
-					}
-				}
-			};
-			this.next = new AbstractAction("", IconLoader.getIcon(
-					"arrow-right.png", width, height)) {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedCard.get() < numCards) {
-						cards.next(view);
-						selectedCard.incrementAndGet();
-						previous.setEnabled(true);
-					}
-					if (selectedCard.get() == numCards - 1) {
-						next.setEnabled(false);
-					}
-				}
-			};
+			this.previous = new FlipBackwards(width, height);
+			this.next = new FlipForward(width, height);
+			this.label = new JLabel(createText());
 
 			// We currently are looking at the first so we shouldn't be able to
 			// click this button
@@ -137,7 +117,52 @@ public class LibraryPanel extends JPanel {
 			this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 			this.add(new JButton(previous));
 			this.add(Box.createHorizontalGlue());
+			this.add(label);
+			this.add(Box.createHorizontalGlue());
 			this.add(new JButton(next));
+		}
+
+		private String createText() {
+			return String.format("Page %s of %s", selectedCard.get() + 1,
+					numCards);
+		}
+
+		private class FlipBackwards extends AbstractAction {
+			public FlipBackwards(int width, int height) {
+				super("", IconLoader.getIcon("arrow-left.png", width, height));
+			}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedCard.get() > 0) {
+					cards.previous(view);
+					selectedCard.decrementAndGet();
+					next.setEnabled(true);
+				}
+				if (selectedCard.get() == 0) {
+					previous.setEnabled(false);
+				}
+				label.setText(createText());
+			}
+		}
+
+		private class FlipForward extends AbstractAction {
+			public FlipForward(int width, int height) {
+				super("", IconLoader.getIcon("arrow-right.png", width, height));
+			}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedCard.get() < numCards) {
+					cards.next(view);
+					selectedCard.incrementAndGet();
+					previous.setEnabled(true);
+				}
+				if (selectedCard.get() == numCards - 1) {
+					next.setEnabled(false);
+				}
+				label.setText(createText());
+			}
 		}
 	}
 
@@ -153,7 +178,7 @@ public class LibraryPanel extends JPanel {
 			}
 
 			// this.key = key;
-			this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			this.setLayout(new GridLayout(SONGS_PER_PAGE, 1));
 			for (final Song song : forPage) {
 				SongPanel sp = new SongPanel(song);
 				this.add(sp);
