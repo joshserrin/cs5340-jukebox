@@ -10,6 +10,7 @@
     <artist name="Nat King Cole"/>
     <album title="The Nat King Cole Story">
       <genre name="Classics"/>
+      <cover location="Music/nat-king-cole.jpg"/>
     </album>
   </song>
   <song title="Have a Holly, Jolly Christmas">
