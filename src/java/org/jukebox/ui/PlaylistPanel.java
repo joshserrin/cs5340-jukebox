@@ -45,7 +45,7 @@ public class PlaylistPanel extends JPanel {
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		JPanel modify = new JPanel(new FlowLayout());
 		modify.add(new JButton(new RemoveSong()));
-		// modify.add(new JButton(new ReorderPlaylist()));
+		modify.add(new JButton(new ReorderPlaylist()));
 
 		this.setLayout(new BorderLayout());
 		this.add(sp, BorderLayout.CENTER);
@@ -116,22 +116,38 @@ public class PlaylistPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			JPanel panel = new RemoveSongsPanel(playlist);
 			String title = "Remove song by clicking the X button";
-			final JDialog dialog = new JDialog((Frame) null, title, true);
-			dialog.setLayout(new BorderLayout());
-			dialog.add(new JScrollPane(panel), BorderLayout.CENTER);
-			dialog.add(new JButton(new AbstractAction("Okay") {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					System.out.println(dialog.getSize());
-					dialog.setVisible(false);
-					dialog.dispose();
-				}
-			}), BorderLayout.SOUTH);
-			dialog.setPreferredSize(new Dimension(300, 700));
-			dialog.pack();
-			dialog.setLocationRelativeTo(null);
-			dialog.setVisible(true);
-			updatePlaylist();
+			createDialog(title, panel);
 		}
+	}
+
+	private class ReorderPlaylist extends AbstractAction {
+		public ReorderPlaylist() {
+			super("Reorganize Playlist");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JPanel panel = new ReorderPlaylistPanel(playlist);
+			String title = "Rearrange the songs by clicking the arrows";
+			createDialog(title, panel);
+		}
+	}
+
+	private void createDialog(String title, JPanel panel) {
+		final JDialog dialog = new JDialog((Frame) null, title, true);
+		dialog.setLayout(new BorderLayout());
+		dialog.add(new JScrollPane(panel), BorderLayout.CENTER);
+		dialog.add(new JButton(new AbstractAction("Done") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dialog.setVisible(false);
+				dialog.dispose();
+			}
+		}), BorderLayout.SOUTH);
+		dialog.setPreferredSize(new Dimension(300, 700));
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
+		updatePlaylist();
 	}
 }

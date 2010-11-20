@@ -10,7 +10,7 @@ import java.util.Random;
 public class Library {
 	private final List<Song> songs;
 
-	private final Random r = new Random(47);
+	private final Random r = new Random();
 
 	public Library(Collection<Song> songs) {
 		if (null == songs) {
