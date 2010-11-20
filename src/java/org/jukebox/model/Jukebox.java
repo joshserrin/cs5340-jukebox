@@ -14,21 +14,21 @@ public class Jukebox {
 		this.playlist = new Playlist();
 	}
 
-	public void addSongToPlaylist(Song song) {
-		if (null == song) {
-			throw new IllegalArgumentException("song cannot be null");
+	public void addSongToPlaylist(Request request) {
+		if (null == request) {
+			throw new IllegalArgumentException("request cannot be null");
 		}
-		System.out.println("\"" + song.getTitle()
+		System.out.println("\"" + request.getSong().getTitle()
 				+ "\" has been added to the playlist");
-		playlist.add(song);
+		playlist.add(request);
 	}
 
 	public Playlist getPlaylist() {
 		return playlist;
 	}
 
-	public Song randomSong() {
-		return library.randomSong();
+	public Request randomRequest() {
+		return new Request(library.randomSong());
 	}
 
 	public List<Song> allSongsSortedbyArtist() {

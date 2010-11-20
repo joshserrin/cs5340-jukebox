@@ -58,8 +58,9 @@ public class Player {
 	 * @param s
 	 * @throws InterruptedException
 	 */
-	private void play(final Song s) throws InterruptedException {
-		assert null != s;
+	private void play(final Request request) throws InterruptedException {
+		assert null != request;
+		Song s = request.getSong();
 		System.out.println("PLAYING: " + s);
 		try {
 			URL url = s.getURL();
@@ -78,7 +79,8 @@ public class Player {
 			exec.submit(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					notifyPlayingNewSong(new PlayingDetails(s, length, device));
+					notifyPlayingNewSong(new PlayingDetails(request, length,
+							device));
 					try {
 						player.play();
 					} catch (Throwable e) {
@@ -89,7 +91,7 @@ public class Player {
 			});
 			do {
 				TimeUnit.MILLISECONDS.sleep(100);
-				notifySongTimeUpdate(new PlayingDetails(s, length, device));
+				notifySongTimeUpdate(new PlayingDetails(request, length, device));
 			} while (!finished.get());
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
@@ -141,9 +143,9 @@ public class Player {
 				Option<Request> next = playlist.pop();
 				if (next.isNone()) {
 					// play something randomly
-					play(jukebox.randomSong());
+					play(jukebox.randomRequest());
 				} else {
-					play(next.get().getSong());
+					play(next.get());
 				}
 				// Continue playing by calling again
 				isPlaying.set(false);
@@ -160,20 +162,21 @@ public class Player {
 	}
 
 	public static class PlayingDetails {
-		private final Song song;
+		private final Request request;
 		private final JavaSoundAudioDevice device;
 		private final long seconds; // length of the song
 
-		private PlayingDetails(Song s, long seconds, JavaSoundAudioDevice player) {
-			assert null != s;
+		private PlayingDetails(Request request, long seconds,
+				JavaSoundAudioDevice player) {
+			assert null != request;
 			assert null != player;
+			this.request = request;
 			this.seconds = seconds;
 			this.device = player;
-			this.song = s;
 		}
 
 		public Song getSong() {
-			return song;
+			return request.getSong();
 		}
 
 		public int getLengthSeconds() {
@@ -182,6 +185,10 @@ public class Player {
 
 		public int getPlayedAmountSeconds() {
 			return device.getPosition() / 1000;
+		}
+
+		public Option<ShortStory> getStory() {
+			return request.getUserStory();
 		}
 	}
 }

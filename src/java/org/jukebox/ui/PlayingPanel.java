@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.text.DecimalFormat;
 
@@ -14,6 +15,7 @@ import javax.swing.JProgressBar;
 import org.jukebox.model.Player;
 import org.jukebox.model.Player.PlayObserver;
 import org.jukebox.model.Player.PlayingDetails;
+import org.jukebox.model.ShortStory;
 import org.jukebox.utils.Option;
 
 /**
@@ -32,7 +34,7 @@ public class PlayingPanel extends JPanel {
 		nowPlaying.setFont(new Font(UIConstants.getDefaultFontName(),
 				Font.BOLD, UIConstants.getLargeFontSize()));
 
-		this.setBackground(Color.GREEN);
+		this.setBackground(new Color(0, 255, 0, 100));
 
 		this.setLayout(new BorderLayout());
 		this.add(nowPlaying, BorderLayout.WEST);
@@ -55,13 +57,17 @@ public class PlayingPanel extends JPanel {
 					if (playingSongDisplay.isSome()) {
 						pp.remove(playingSongDisplay.get());
 					}
+					Option<ShortStory> sOpt = details.getStory();
+					JPanel p = new JPanel(new FlowLayout());
 					SongPanel sp = new SongPanel(details.getSong());
-					playingSongDisplay = Option.<Component> of(sp);
-					// JPanel panel = new JPanel(new BorderLayout());
-					// panel.add(sp, BorderLayout.CENTER);
-					// panel.add(songTime, BorderLayout.SOUTH);
+					p.add(sp);
+					if (sOpt.isSome()) {
+						StoryPanel stp = new StoryPanel(sOpt.get());
+						p.add(stp);
+					}
+					playingSongDisplay = Option.<Component> of(p);
 
-					pp.add(sp);
+					pp.add(p);
 					pp.validate();
 					pp.repaint();
 				}

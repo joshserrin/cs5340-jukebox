@@ -35,18 +35,19 @@ public class Playlist {
 		return requests.iterator();
 	}
 
-	public void add(Song song) {
-		if (null == song) {
-			throw new IllegalArgumentException("song cannot be null");
+	public void add(Request request) {
+		if (null == request) {
+			throw new IllegalArgumentException("request cannot be null");
 		}
-		requests.add(new Request(song));
-		notifyAdded(song);
+		requests.add(request);
+		notifyAdded(request);
 	}
 
-	private void notifyAdded(Song s) {
-		assert null != s;
+	private void notifyAdded(Request r) {
+		assert null != r;
+		Song song = r.getSong();
 		for (PlaylistObserver obs : observers) {
-			obs.songAdded(s);
+			obs.songAdded(song);
 		}
 	}
 
@@ -71,5 +72,12 @@ public class Playlist {
 			notifyRemoved(next.get().getSong());
 		}
 		return next;
+	}
+
+	public boolean remove(Request request) {
+		if (null == request) {
+			throw new IllegalArgumentException("request cannot be null");
+		}
+		return requests.remove(request);
 	}
 }

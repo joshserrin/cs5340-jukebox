@@ -7,10 +7,15 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.util.Iterator;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,9 +43,13 @@ public class PlaylistPanel extends JPanel {
 		JScrollPane sp = new JScrollPane(view,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JPanel modify = new JPanel(new FlowLayout());
+		modify.add(new JButton(new RemoveSong()));
+		// modify.add(new JButton(new ReorderPlaylist()));
 
 		this.setLayout(new BorderLayout());
 		this.add(sp, BorderLayout.CENTER);
+		this.add(modify, BorderLayout.SOUTH);
 
 		playlist.addObserver(new PlaylistObserver() {
 			@Override
@@ -90,11 +99,39 @@ public class PlaylistPanel extends JPanel {
 			indexLabel.setPreferredSize(new Dimension(100, 30));
 			indexLabel.setFont(new Font(UIConstants.getDefaultFontName(),
 					Font.BOLD, UIConstants.getMediumFontSize()));
-			Component song = new SimpleSongPanel(request.getSong());
+			Component song = new SimpleSongPanel(request);
 
 			this.setLayout(new FlowLayout(FlowLayout.LEADING));
 			this.add(indexLabel);
 			this.add(song);
+		}
+	}
+
+	private class RemoveSong extends AbstractAction {
+		public RemoveSong() {
+			super("Remove Song");
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JPanel panel = new RemoveSongsPanel(playlist);
+			String title = "Remove song by clicking the X button";
+			final JDialog dialog = new JDialog((Frame) null, title, true);
+			dialog.setLayout(new BorderLayout());
+			dialog.add(new JScrollPane(panel), BorderLayout.CENTER);
+			dialog.add(new JButton(new AbstractAction("Okay") {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println(dialog.getSize());
+					dialog.setVisible(false);
+					dialog.dispose();
+				}
+			}), BorderLayout.SOUTH);
+			dialog.setPreferredSize(new Dimension(300, 700));
+			dialog.pack();
+			dialog.setLocationRelativeTo(null);
+			dialog.setVisible(true);
+			updatePlaylist();
 		}
 	}
 }

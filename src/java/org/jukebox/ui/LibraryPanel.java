@@ -3,6 +3,7 @@ package org.jukebox.ui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Container;
+import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -21,9 +22,11 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.jukebox.model.Jukebox;
+import org.jukebox.model.Request;
 import org.jukebox.model.Song;
 
 public class LibraryPanel extends JPanel {
@@ -185,9 +188,36 @@ public class LibraryPanel extends JPanel {
 				sp.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						System.out.println(song.getTitle()
-								+ " should be added to the playlist");
-						jukebox.addSongToPlaylist(song);
+						EventQueue.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								int response = JOptionPane.showConfirmDialog(
+										LibraryPanel.this,
+										"Would you like to add a short story to  be displayed while "
+												+ song.getTitle()
+												+ " is playing?",
+										"Personalize Song",
+										JOptionPane.YES_NO_OPTION);
+
+								Request request = null;
+								if (response == JOptionPane.NO_OPTION) {
+									request = new Request(song);
+								} else {
+									InputStoryPanel sp = new InputStoryPanel();
+									int r = JOptionPane.showConfirmDialog(
+											LibraryPanel.this, sp,
+											"Provide your short story",
+											JOptionPane.OK_CANCEL_OPTION);
+									if (r == JOptionPane.OK_OPTION) {
+										request = new Request(song, sp
+												.getShortStory());
+									} else {
+										request = new Request(song);
+									}
+								}
+								jukebox.addSongToPlaylist(request);
+							}
+						});
 					}
 				});
 			}
